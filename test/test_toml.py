@@ -56,19 +56,30 @@ def test_unknown_type():
 
 
 SEQUENCE_TYPES = (
-    ([123, 'foo', True], ('[123, "foo", true]',)),
-    ((123, 'foo', True), ('[123, "foo", true]',)),
-    (set([123, 'foo', True]), ('[true, 123, "foo"]', '["foo", true, 123]')),
-    (frozenset([123, 'foo', True]), ('[true, 123, "foo"]', '["foo", true, 123]')),
-    (CustomUserList([123, 'foo', True]), ('[123, "foo", true]',)),
+    ([123, 'foo', True], '[123, "foo", true]'),
+    ((123, 'foo', True), '[123, "foo", true]'),
+    (CustomUserList([123, 'foo', True]), '[123, "foo", true]'),
 )
 
 @pytest.mark.parametrize('value,expected', SEQUENCE_TYPES)
 def test_sequence_types(value, expected):
-    assert to_toml({'foo': value}) in [
-        'foo = %s' % (exp,)
-        for exp in expected
-    ]
+    assert to_toml({'foo': value}) == 'foo = %s' % (expected,)
+
+
+def test_set_types():
+    out = to_toml({'a_set': set([123, 'foo', True])})
+    assert out.startswith('a_set = [')
+    assert out.endswith(']')
+    assert '123' in out
+    assert 'true' in out
+    assert '"foo"' in out
+
+    out = to_toml({'a_set': frozenset([123, 'foo', True])})
+    assert out.startswith('a_set = [')
+    assert out.endswith(']')
+    assert '123' in out
+    assert 'true' in out
+    assert '"foo"' in out
 
 
 od = OrderedDict()
