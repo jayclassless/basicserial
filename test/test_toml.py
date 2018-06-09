@@ -90,7 +90,7 @@ def test_dict_types(value, expected):
 
 
 def test_pretty():
-    assert to_toml({'foo': 'bar', 'baz': [1,2]}, pretty=True) == """foo = "bar"
+    assert to_toml(OrderedDict((('foo', 'bar'), ('baz', [1,2]))), pretty=True) == """foo = "bar"
 baz = [1, 2]"""
 
 

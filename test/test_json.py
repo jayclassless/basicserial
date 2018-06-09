@@ -97,7 +97,7 @@ def test_pretty():
   3
 ]"""
 
-    assert to_json({'foo': 'bar', 'baz': [1,2]}, pretty=True) == """{
+    assert to_json(OrderedDict((('foo', 'bar'), ('baz', [1,2]))), pretty=True) == """{
   "foo": "bar",
   "baz": [
     1,
