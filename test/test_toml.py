@@ -56,16 +56,19 @@ def test_unknown_type():
 
 
 SEQUENCE_TYPES = (
-    ([123, 'foo', True], '[123, "foo", true]'),
-    ((123, 'foo', True), '[123, "foo", true]'),
-    (set([123, 'foo', True]), '[true, 123, "foo"]'),
-    (frozenset([123, 'foo', True]), '[true, 123, "foo"]'),
-    (CustomUserList([123, 'foo', True]), '[123, "foo", true]'),
+    ([123, 'foo', True], ('[123, "foo", true]',)),
+    ((123, 'foo', True), ('[123, "foo", true]',)),
+    (set([123, 'foo', True]), ('[true, 123, "foo"]', '["foo", true, 123]')),
+    (frozenset([123, 'foo', True]), ('[true, 123, "foo"]', '["foo", true, 123]')),
+    (CustomUserList([123, 'foo', True]), ('[123, "foo", true]',)),
 )
 
 @pytest.mark.parametrize('value,expected', SEQUENCE_TYPES)
 def test_sequence_types(value, expected):
-    assert to_toml({'foo': value}) == 'foo = %s' % (expected,)
+    assert to_toml({'foo': value}) in [
+        'foo = %s' % (exp,)
+        for exp in expected
+    ]
 
 
 od = OrderedDict()
