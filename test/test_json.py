@@ -3,9 +3,7 @@ from datetime import date, time, datetime
 from decimal import Decimal
 from fractions import Fraction
 from pytz import timezone
-from UserDict import UserDict
-from UserList import UserList
-from UserString import UserString
+from six.moves import UserDict, UserList, UserString
 
 import pytest
 
