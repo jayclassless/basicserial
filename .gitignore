@@ -1,0 +1,8 @@
+.cache
+.pytest_cache
+.coverage*
+*.egg-info
+*.pyc
+build
+dist
+Pipfile.lock

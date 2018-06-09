@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+e1839a8 = {path = ".", editable = true}
+coverage = "*"
+coverage_python_version = "*"
+coveralls = "*"
+pytest = "*"
+pytz = "*"
+tidypy = "*"
+twine = "*"
+wheel = "*"
+
+[packages]
