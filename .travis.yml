@@ -5,8 +5,7 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
-  # pyyaml doesn't install on 3.7
-  # - "3.7-dev"
+  - "3.7-dev"
   # pypy2 + pipenv seems to have trouble
   # - "pypy"
   - "pypy3"

@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [dev-packages]
-e1839a8 = {path = ".", editable = true}
+basicserial = {path = ".", editable = true}
 coverage = "*"
 coverage_python_version = "*"
 coveralls = "*"
