@@ -15,8 +15,7 @@ env:
 
 install:
   - pip install --upgrade pip
-  - pip install pipenv
-  - pipenv --version
+  - pip install --upgrade pipenv
   - make setup
 
 script:
