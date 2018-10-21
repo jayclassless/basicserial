@@ -14,9 +14,9 @@ env:
   - PIPENV_IGNORE_VIRTUALENVS=1
 
 install:
-  - pip install --upgrade pip
-  - pip install --upgrade pipenv
+  - pip install --upgrade pip pipenv certifi
   - make setup
+  - pip freeze
 
 script:
   - make ci
