@@ -1,8 +1,8 @@
 setup::
 	@pipenv install --dev
 
-lint::
-	@pipenv run tidypy check
+#lint::
+#	@pipenv run tidypy check
 
 test::
 	@pipenv run coverage run --rcfile=setup.cfg --module py.test
@@ -12,7 +12,7 @@ ci:: test
 	@pipenv run coveralls --rcfile=setup.cfg
 
 clean::
-	@rm -rf dist build .cache .pytest_cache .coverage
+	@rm -rf dist build .cache .pytest_cache .coverage Pipfile.lock
 
 build:: clean
 	@pipenv run python setup.py sdist

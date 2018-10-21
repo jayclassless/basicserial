@@ -10,8 +10,9 @@ coverage_python_version = "*"
 coveralls = "*"
 pytest = "*"
 pytz = "*"
-tidypy = "*"
 twine = "*"
 wheel = "*"
+pyyaml = "*"
+pytoml = "*"
 
 [packages]
