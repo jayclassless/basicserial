@@ -14,5 +14,6 @@ twine = "*"
 wheel = "*"
 pyyaml = "*"
 pytoml = "*"
+requests = {version = "*", extras = ["security"]}
 
 [packages]
