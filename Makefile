@@ -1,5 +1,5 @@
 setup::
-	@pipenv install --dev
+	@pipenv install --dev --skip-lock
 
 #lint::
 #	@pipenv run tidypy check
@@ -12,7 +12,7 @@ ci:: test
 	@pipenv run coveralls --rcfile=setup.cfg
 
 clean::
-	@rm -rf dist build .cache .pytest_cache .coverage Pipfile.lock
+	@rm -rf dist build .cache .pytest_cache .coverage Pipfile.lock pip-wheel-metadata
 
 build:: clean
 	@pipenv run python setup.py sdist

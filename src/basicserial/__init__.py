@@ -260,8 +260,7 @@ def to_yaml(value, pretty=False):
         'Dumper': BasicYamlDumper,
         'allow_unicode': True,
     }
-    if pretty:
-        options['default_flow_style'] = False
+    options['default_flow_style'] = not pretty
 
     return yaml.dump(value, **options).rstrip()
 
