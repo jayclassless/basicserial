@@ -1,5 +1,5 @@
 setup::
-	@pipenv install --dev --skip-lock
+	@PIP_USE_PEP517=no pipenv install --dev --skip-lock
 
 #lint::
 #	@pipenv run tidypy check
