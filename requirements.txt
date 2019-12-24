@@ -1,0 +1,8 @@
+coverage
+coverage_python_version
+pytest
+pytz
+twine
+wheel
+pyyaml
+pytoml

@@ -1,0 +1,40 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 5 * * 6"
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        python-version:
+          - 2.7
+          - 3.5
+          - 3.6
+          - 3.7
+          - 3.8
+          - pypy2
+          - pypy3
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Checkout Code
+        uses: actions/checkout@v1
+
+      - name: Install
+        run: |
+          make setup-ci
+          make freeze
+
+      - name: Test
+        run: make test-ci
+

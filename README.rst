@@ -6,10 +6,8 @@ basicserial
    :target: https://pypi.python.org/pypi/basicserial
 .. image:: https://img.shields.io/pypi/l/basicserial.svg
    :target: https://pypi.python.org/pypi/basicserial
-.. image:: https://travis-ci.org/jayclassless/basicserial.svg?branch=master
-   :target: https://travis-ci.org/jayclassless/basicserial
-.. image:: https://coveralls.io/repos/github/jayclassless/basicserial/badge.svg?branch=master
-   :target: https://coveralls.io/github/jayclassless/basicserial?branch=master
+.. image:: https://github.com/jayclassless/basicserial/workflows/Test/badge.svg
+   :target: https://github.com/jayclassless/basicserial/actions
 
 .. contents:: Contents
 

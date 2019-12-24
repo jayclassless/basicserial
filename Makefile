@@ -1,23 +1,41 @@
+VENV = .venv
+BINDIR = $(if $(wildcard ${VENV}/bin), '${VENV}/bin/', '')
+
+
 setup::
-	@PIP_USE_PEP517=no pipenv install --dev --skip-lock
+	@python -m venv ${VENV} || virtualenv ${VENV}
+	@${MAKE} install
 
-#lint::
-#	@pipenv run tidypy check
+setup-ci:: install
 
-test::
-	@pipenv run coverage run --rcfile=setup.cfg --module py.test
-	@pipenv run coverage report --rcfile=setup.cfg
+install::
+	@${BINDIR}pip install --upgrade pip
+	@${BINDIR}pip install -r requirements.txt
+	@${BINDIR}pip install -e .
 
-ci:: test
-	@pipenv run coveralls --rcfile=setup.cfg
+freeze::
+	@${BINDIR}python --version
+	@${BINDIR}pip --version
+	@${BINDIR}pip freeze
 
 clean::
-	@rm -rf dist build .cache .pytest_cache .coverage Pipfile.lock pip-wheel-metadata
+	@rm -rf dist build .cache .pytest_cache pip-wheel-metadata .coverage.*
+
+clean-full:: clean
+	@rm -rf .venv
+
+
+test::
+	@${BINDIR}coverage run --rcfile=setup.cfg --module py.test
+	@${BINDIR}coverage report --rcfile=setup.cfg
+
+test-ci:: test
+
 
 build:: clean
-	@pipenv run python setup.py sdist
-	@pipenv run python setup.py bdist_wheel
+	@${BINDIR}python setup.py sdist
+	@${BINDIR}python setup.py bdist_wheel
 
 publish::
-	@pipenv run twine upload dist/*
+	@${BINDIR}twine upload dist/*
 
