@@ -5,6 +5,12 @@ basicserial Change Log
 .. contents:: Releases
 
 
+1.0.0 (2020-01-10)
+==================
+
+* Removed Python 2 support.
+
+
 0.2.0 (2019-04-27)
 ==================
 
