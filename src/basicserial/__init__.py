@@ -9,12 +9,15 @@ import json
 import re
 import sys
 
-from collections import defaultdict, OrderedDict
+from collections import (
+    defaultdict,
+    OrderedDict,
+    UserDict,
+    UserList,
+    UserString,
+)
 
 import iso8601
-
-from six import string_types, iteritems
-from six.moves import UserDict, UserList, UserString
 
 
 __all__ = (
@@ -142,11 +145,11 @@ def convert_datetimes(value):
     if isinstance(value, list):
         pairs = enumerate(value)
     elif isinstance(value, dict):
-        pairs = iteritems(value)
+        pairs = value.items()
 
     results = []
     for key, val in pairs:
-        if isinstance(val, string_types):
+        if isinstance(val, str):
             val = get_date_or_string(val)
 
         elif isinstance(val, (dict, list)):
@@ -160,7 +163,7 @@ def convert_datetimes(value):
     return dict(results)
 
 
-class BasicJsonDecoder(object):
+class BasicJsonDecoder:
     def __init__(self, native_datetimes):
         self.native_datetimes = native_datetimes
 
@@ -185,7 +188,7 @@ def from_json(value, native_datetimes=True):
 
     hook = BasicJsonDecoder(native_datetimes=native_datetimes)
     result = json.loads(value, object_hook=hook)
-    if native_datetimes and isinstance(result, string_types):
+    if native_datetimes and isinstance(result, str):
         return get_date_or_string(result)
     return result
 

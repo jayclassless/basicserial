@@ -6,10 +6,12 @@ requires = [
 
 [tool.tidypy]
 exclude = [
+    '.venv/.*',
     'docs/source/conf.py',
     'test/.*',
     'build/.*',
     'dist/.*',
+    '.pytest_cache/.*',
 ]
 vulture = {use = false}
 
@@ -45,11 +47,6 @@ disabled = [
 disabled = [
     'empty-lines',
     'document-start',
-]
-
-[tool.tidypy.2to3]
-disabled = [
-    #'future',
 ]
 
 [tool.tidypy.bandit]
