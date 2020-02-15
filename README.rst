@@ -13,7 +13,7 @@ basicserial
 
 
 Overview
---------
+========
 Does this look familiar?
 
 ::
@@ -42,59 +42,59 @@ do the following for you when working with JSON, YAML, and TOML:
        - JSON
        - YAML
        - TOML
-     * - `set <https://docs.python.org/2/library/stdtypes.html#set>`_
+     * - `set <https://docs.python.org/3/library/stdtypes.html#set>`_
        - array
        - sequence
        - array
-     * - `frozenset <https://docs.python.org/2/library/stdtypes.html#frozenset>`_
+     * - `frozenset <https://docs.python.org/3/library/stdtypes.html#frozenset>`_
        - array
        - sequence
        - array
-     * - `Decimal <https://docs.python.org/2/library/decimal.html>`_
+     * - `Decimal <https://docs.python.org/3/library/decimal.html>`_
        - number
        - float
        - float
-     * - `Fraction <https://docs.python.org/2/library/fractions.html>`_
+     * - `Fraction <https://docs.python.org/3/library/fractions.html>`_
        - string
        - string
        - string
-     * - `date <https://docs.python.org/2/library/datetime.html#date-objects>`_
+     * - `date <https://docs.python.org/3/library/datetime.html#date-objects>`_
        - string (ISO 8601)
        - timestamp
        - string (ISO 8601)
-     * - `time <https://docs.python.org/2/library/datetime.html#time-objects>`_
+     * - `time <https://docs.python.org/3/library/datetime.html#time-objects>`_
        - string (ISO 8601)
        - string (ISO 8601)
        - string (ISO 8601)
-     * - `datetime <https://docs.python.org/2/library/datetime.html#datetime-objects>`_
+     * - `datetime <https://docs.python.org/3/library/datetime.html#datetime-objects>`_
        - string (ISO 8601)
        - timestamp
        - string (ISO 8601)
-     * - `complex <https://docs.python.org/2/library/functions.html#complex>`_
+     * - `complex <https://docs.python.org/3/library/functions.html#complex>`_
        - string
        - string
        - string
-     * - `OrderedDict <https://docs.python.org/2/library/collections.html#collections.OrderedDict>`_
+     * - `OrderedDict <https://docs.python.org/3/library/collections.html#collections.OrderedDict>`_
        - object
        - map
        - key/value
-     * - `defaultdict <https://docs.python.org/2/library/collections.html#defaultdict-objects>`_
+     * - `defaultdict <https://docs.python.org/3/library/collections.html#defaultdict-objects>`_
        - object
        - map
        - key/value
-     * - `namedtuple <https://docs.python.org/2/library/collections.html#namedtuple-factory-function-for-tuples-with-named-fields>`_
+     * - `namedtuple <https://docs.python.org/3/library/collections.html#namedtuple-factory-function-for-tuples-with-named-fields>`_
        - object
        - map
        - key/value
-     * - `UserDict <https://docs.python.org/2/library/userdict.html>`_
+     * - `UserDict <https://docs.python.org/3.8/library/collections.html#userdict-objects>`_
        - object
        - map
        - key/value
-     * - `UserList <https://docs.python.org/2/library/userdict.html#module-UserList>`_
+     * - `UserList <https://docs.python.org/3.8/library/collections.html#userlist-objects>`_
        - array
        - sequence
        - array
-     * - `UserString <https://docs.python.org/2/library/userdict.html#module-UserString>`_
+     * - `UserString <https://docs.python.org/3.8/library/collections.html#userstring-objects>`_
        - string
        - string
        - string
@@ -114,7 +114,7 @@ provides that functionality (for YAML ``basicserial`` supports `PyYAML
 <https://pypi.org/project/ruamel.yaml>`_, for TOML it supports `toml
 <https://pypi.org/project/toml>`_ or `pytoml
 <https://pypi.org/project/pytoml>`_). ``basicserial`` will use Python's
-built-in `json <https://docs.python.org/2/library/json.html>`_ module to handle
+built-in `json <https://docs.python.org/3/library/json.html>`_ module to handle
 JSON.
 
 JSON::
@@ -169,7 +169,7 @@ TOML::
 
 
 License
--------
+=======
 This project is released under the terms of the `MIT License`_.
 
 .. _MIT License: https://opensource.org/licenses/MIT
