@@ -5,6 +5,12 @@ basicserial Change Log
 .. contents:: Releases
 
 
+1.1.0 (TBD)
+===========
+
+* Added support for ``enum.Enum`` members.
+
+
 1.0.0 (2020-01-10)
 ==================
 

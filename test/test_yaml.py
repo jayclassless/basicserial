@@ -1,6 +1,7 @@
 from collections import namedtuple, OrderedDict, defaultdict
 from datetime import date, time, datetime
 from decimal import Decimal
+from enum import Enum
 from fractions import Fraction
 from pytz import timezone
 from six.moves import UserDict, UserList, UserString
@@ -18,6 +19,11 @@ class CustomUserList(UserList):
 
 class CustomUserString(UserString):
     pass
+
+class CustomEnum(Enum):
+    an_int = 1
+    a_str = 'foo'
+    a_bool = False
 
 CustomNamedTuple = namedtuple('CustomNamedTuple', ['foo'])
 
@@ -44,6 +50,9 @@ SIMPLE_TYPES = (
     (datetime(2018, 5, 22, 12, 34, 56, 789), '2018-05-22 12:34:56.000789\n...'),
     (datetime(2018, 5, 22, 12, 34, 56, 789000), '2018-05-22 12:34:56.789000\n...'),
     (datetime(2018, 5, 22, 12, 34, 56, 789000, tzinfo=TZ_EST), '2018-05-22 12:34:56.789000-04:56\n...'),
+    (CustomEnum.an_int, '1\n...'),
+    (CustomEnum.a_str, 'foo\n...'),
+    (CustomEnum.a_bool, 'false\n...'),
 )
 
 @pytest.mark.parametrize('value,expected', SIMPLE_TYPES)

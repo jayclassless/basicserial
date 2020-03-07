@@ -86,18 +86,21 @@ do the following for you when working with JSON, YAML, and TOML:
        - object
        - map
        - key/value
-     * - `UserDict <https://docs.python.org/3.8/library/collections.html#userdict-objects>`_
+     * - `UserDict <https://docs.python.org/3/library/collections.html#userdict-objects>`_
        - object
        - map
        - key/value
-     * - `UserList <https://docs.python.org/3.8/library/collections.html#userlist-objects>`_
+     * - `UserList <https://docs.python.org/3/library/collections.html#userlist-objects>`_
        - array
        - sequence
        - array
-     * - `UserString <https://docs.python.org/3.8/library/collections.html#userstring-objects>`_
+     * - `UserString <https://docs.python.org/3/library/collections.html#userstring-objects>`_
        - string
        - string
        - string
+
+* Can serialize `Enum <https://docs.python.org/3/library/enum.html>` members
+  appropriately based on their type.
 
 * Can automatically deserialize dates, times, and datetimes into the native
   Python objects.

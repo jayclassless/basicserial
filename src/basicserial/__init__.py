@@ -4,6 +4,7 @@
 
 import datetime
 import decimal
+import enum
 import fractions
 import json
 import re
@@ -77,6 +78,8 @@ class BasicJSONEncoder(json.JSONEncoder):
     def encode(self, o):
         if isinstance(o, tuple) and hasattr(o, '_fields'):
             o = o._asdict()
+        elif isinstance(o, enum.Enum):
+            o = o.value
         return super(BasicJSONEncoder, self).encode(o)
 
 
@@ -215,6 +218,9 @@ class BasicYamlDumper(yaml.SafeDumper):  # noqa: too-many-ancestors
     def complex_representer(self, data):
         return self.represent_scalar('tag:yaml.org,2002:str', str(data))
 
+    def enum_representer(self, data):
+        return self.represent_data(data.value)
+
     def unknown_representer(self, data):
         if isinstance(data, tuple) and hasattr(data, '_fields'):
             return self.dict_representer(data._asdict())
@@ -242,6 +248,11 @@ YAML_REPRESENTERS = (
 
 for type_, representer in YAML_REPRESENTERS:
     BasicYamlDumper.add_representer(type_, representer)
+
+BasicYamlDumper.add_multi_representer(
+    enum.Enum,
+    BasicYamlDumper.enum_representer,
+)
 
 
 def to_yaml(value, pretty=False):
@@ -350,6 +361,9 @@ def make_toml_friendly(value):
 
     if isinstance(value, (UserString, complex, fractions.Fraction)):
         return str(value)
+
+    if isinstance(value, enum.Enum):
+        return value.value
 
     return value
 

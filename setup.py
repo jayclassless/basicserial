@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='basicserial',
-    version='1.0.0',
+    version='1.1.0',
     description='A convenience wrapper around serialization libraries to'
     ' handle common tasks.',
     long_description=open('README.rst', 'r').read(),
