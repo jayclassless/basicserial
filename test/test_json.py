@@ -1,3 +1,5 @@
+import sys
+
 from .common import *
 
 from basicserial import to_json, from_json, SUPPORTED_JSON_PACKAGES
@@ -76,16 +78,15 @@ od['bar'] = 'foo'
 dd = defaultdict(list)
 dd['foo'] = 123
 
-DICT_TYPES = pkg_parameterize(
-    SUPPORTED_JSON_PACKAGES,
-    (
-        ({'foo': 123}, '{"foo":123}'),
-        (od, '{"foo":123,"zzz":true,"bar":"foo"}'),
-        (CustomNamedTuple(123), '{"foo":123}'),
-        (CustomUserDict({'foo': 123}), '{"foo":123}'),
-        (dd, '{"foo":123}'),
-    ),
-)
+DICT_TYPES = [
+    ({'foo': 123}, '{"foo":123}'),
+    (CustomNamedTuple(123), '{"foo":123}'),
+    (CustomUserDict({'foo': 123}), '{"foo":123}'),
+    (dd, '{"foo":123}'),
+]
+if sys.version_info.major >= 3 and sys.version_info.minor >= 6:
+    DICT_TYPES.append((od, '{"foo":123,"zzz":true,"bar":"foo"}'))
+DICT_TYPES = pkg_parameterize(SUPPORTED_JSON_PACKAGES, DICT_TYPES)
 
 @pytest.mark.parametrize('pkg,value,expected', DICT_TYPES)
 def test_dict_types(pkg, value, expected):
@@ -104,8 +105,7 @@ def test_pretty(pkg):
   3
 ]"""
 
-    assert to_json(OrderedDict((('foo', 'bar'), ('baz', [1,2]))), pretty=True, pkg=pkg) == """{
-  "foo": "bar",
+    assert to_json({'baz': [1,2]}, pretty=True, pkg=pkg) == """{
   "baz": [
     1,
     2

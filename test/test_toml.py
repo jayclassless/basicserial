@@ -57,6 +57,8 @@ SEQUENCE_TYPES = pkg_parameterize(
         ([123, 'foo', True], None),
         ((123, 'foo', True), None),
         (CustomUserList([123, 'foo', True]), None),
+        (set([123, 'foo', True]), None),
+        (frozenset([123, 'foo', True]), None),
     ),
 )
 
@@ -73,29 +75,11 @@ def test_sequence_types(pkg, value, expected):
     assert q(pkg, '"foo"') in out
 
 
-@pytest.mark.parametrize('pkg', SUPPORTED_TOML_PACKAGES)
-def test_set_types(pkg):
-    if pkg == 'tomlkit':
-        # tomlkit doesn't like sequences with mixed types
-        return
-
-    out = to_toml({'a_set': set([123, 'foo', True])}, pkg=pkg)
-    assert out.startswith('a_set = [')
-    assert out.endswith(']')
-    assert '123' in out
-    assert 'true' in out
-    assert q(pkg, '"foo"') in out
-
-    out = to_toml({'a_set': frozenset([123, 'foo', True])}, pkg=pkg)
-    assert out.startswith('a_set = [')
-    assert out.endswith(']')
-    assert '123' in out
-    assert 'true' in out
-    assert q(pkg, '"foo"') in out
-
-
 od = OrderedDict()
 od['foo'] = 123
+od['zzz'] = True
+od['bar'] = 12.34
+
 dd = defaultdict(list)
 dd['foo'] = 123
 
@@ -103,7 +87,6 @@ DICT_TYPES = pkg_parameterize(
     SUPPORTED_TOML_PACKAGES,
     (
         ({'foo': 123}, 'foo = 123'),
-        (od, 'foo = 123'),
         (CustomNamedTuple(123), 'foo = 123'),
         (CustomUserDict({'foo': 123}), 'foo = 123'),
         (dd, 'foo = 123'),
@@ -114,10 +97,12 @@ DICT_TYPES = pkg_parameterize(
 def test_dict_types(pkg, value, expected):
     assert to_toml(value, pkg=pkg) == expected
 
-
-def test_pretty():
-    assert to_toml(OrderedDict((('foo', 'bar'), ('baz', [1,2]))), pretty=True) == """foo = "bar"
-baz = [1, 2]"""
+@pytest.mark.parametrize('pkg', SUPPORTED_TOML_PACKAGES)
+def test_ordered_dict(pkg):
+    if pkg == 'tomlkit':
+        # tomlkit annoying sorts keys by itself
+        return
+    assert to_toml(od, pretty=True, pkg=pkg) == 'foo = 123\nzzz = true\nbar = 12.34'
 
 
 ALL_TYPES = """
