@@ -5,8 +5,8 @@ basicserial Change Log
 .. contents:: Releases
 
 
-1.1.0 (TBD)
-===========
+1.1.0 (2020-03-15)
+==================
 
 * Added support for handling ``enum.Enum`` members.
 * Added support for handling ``uuid.UUID`` objects.
