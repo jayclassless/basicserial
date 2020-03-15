@@ -12,51 +12,64 @@ from collections import (
     UserList,
     UserString,
 )
-from functools import lru_cache
 
 from .util import get_date_or_string, get_implementation, convert_datetimes
 
 
-SUPPORTED_PACKAGES = ('json', 'simplejson')
+SUPPORTED_PACKAGES = (
+    'json',
+    'simplejson',
+    'orjson',
+    'rapidjson',
+    'ujson',
+    'hyperjson',
+)
 
 
-@lru_cache()
-def _build_encoder(json):
-    class BasicJSONEncoder(json.JSONEncoder):
-        SIMPLE_ENCODINGS = (
-            (datetime.date, lambda x: x.isoformat()),
-            (datetime.time, lambda x: x.isoformat()),
-            (decimal.Decimal, float),
-            (fractions.Fraction, str),
-            (set, list),
-            (frozenset, list),
-            (complex, str),
-            (UserDict, lambda x: x.data),
-            (UserList, lambda x: x.data),
-            (UserString, lambda x: x.data),
-        )
+def _encode_datetime(value):
+    encoded = value.isoformat()
+    if not value.utcoffset():
+        encoded += 'Z'
+    return encoded
 
-        def default(self, o):
-            if isinstance(o, datetime.datetime):
-                value = o.isoformat()
-                if not o.utcoffset():
-                    value += 'Z'
-                return value
 
-            for typ, encoder in self.SIMPLE_ENCODINGS:
-                if isinstance(o, typ):
-                    return encoder(o)
+ENCODINGS = (
+    (datetime.datetime, _encode_datetime),
+    (datetime.date, lambda x: x.isoformat()),
+    (datetime.time, lambda x: x.isoformat()),
+    (decimal.Decimal, float),
+    (fractions.Fraction, str),
+    (set, list),
+    (frozenset, list),
+    (complex, str),
+    (UserString, lambda x: x.data),
+)
 
-            return super().default(o)  # pragma: no cover
 
-        def encode(self, o):
-            if isinstance(o, tuple) and hasattr(o, '_fields'):
-                o = o._asdict()
-            elif isinstance(o, enum.Enum):
-                o = o.value
-            return super().encode(o)
+def _make_json_friendly(value):
+    if isinstance(value, tuple) and hasattr(value, '_fields'):
+        return _make_json_friendly(value._asdict())
 
-    return BasicJSONEncoder
+    if isinstance(value, (dict, UserDict)):
+        return {
+            key: _make_json_friendly(value[key])
+            for key in value
+        }
+
+    if isinstance(value, (list, set, frozenset, tuple, UserList)):
+        return [
+            _make_json_friendly(element)
+            for element in value
+        ]
+
+    if isinstance(value, enum.Enum):
+        return value.value
+
+    for typ, encoder in ENCODINGS:
+        if isinstance(value, typ):
+            return encoder(value)
+
+    return value
 
 
 def to_json(value, pretty=False, pkg=None):
@@ -81,25 +94,23 @@ def to_json(value, pretty=False, pkg=None):
         pkg,
     )
 
-    options = {
-        'sort_keys': False,
-        'cls': _build_encoder(json),
-    }
-    if pretty:
-        options['indent'] = 2
-        options['separators'] = (',', ': ')
+    options = {}
 
-    return json.dumps(value, **options)
+    if pkg == 'orjson':
+        if pretty:
+            options['option'] = json.OPT_INDENT_2
+    else:
+        options['sort_keys'] = False
+        if pretty and pkg not in ('hyperjson',):
+            options['indent'] = 2
+            if pkg not in ('rapidjson', 'ujson'):
+                options['separators'] = (',', ': ')
 
+    encoded = json.dumps(_make_json_friendly(value), **options)
+    if pkg == 'orjson':
+        encoded = encoded.decode('utf-8')
 
-class BasicJsonDecoder:
-    def __init__(self, native_datetimes):
-        self.native_datetimes = native_datetimes
-
-    def __call__(self, value):
-        if self.native_datetimes:
-            return convert_datetimes(value)
-        return value
+    return encoded
 
 
 def from_json(value, native_datetimes=True, pkg=None):
@@ -125,11 +136,13 @@ def from_json(value, native_datetimes=True, pkg=None):
         pkg,
     )
 
-    hook = BasicJsonDecoder(native_datetimes=native_datetimes)
-    result = json.loads(value, object_hook=hook)
+    result = json.loads(value)
 
-    if native_datetimes and isinstance(result, str):
-        return get_date_or_string(result)
+    if native_datetimes:
+        if isinstance(result, (dict, list)):
+            result = convert_datetimes(result)
+        elif isinstance(result, str):
+            result = get_date_or_string(result)
 
     return result
 

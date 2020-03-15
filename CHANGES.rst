@@ -11,8 +11,8 @@ basicserial Change Log
 * Added support for handling ``enum.Enum`` members.
 * Added the ability to explicitly specify the serialization package to use via
   a ``pkg`` argument.
-* Added support for using the ``simplejson``, ``qtoml``, and ``tomlkit``
-  libraries.
+* Added support for using the ``simplejson``, ``orjson``, ``rapidjson``,
+  ``ujson``, ``hyperjson``, ``qtoml``, and ``tomlkit`` libraries.
 
 
 1.0.0 (2020-01-10)

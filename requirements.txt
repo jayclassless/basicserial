@@ -10,3 +10,7 @@ toml
 qtoml
 tomlkit
 simplejson
+orjson
+python-rapidjson
+ujson
+hyperjson

@@ -32,6 +32,8 @@ SIMPLE_TYPES = pkg_parameterize(
 
 @pytest.mark.parametrize('pkg,value,expected', SIMPLE_TYPES)
 def test_simple_types(pkg, value, expected):
+    if pkg == 'ujson':
+        expected = expected.replace('/', '\\/')
     assert to_json(value, pkg=pkg) == expected
 
 
@@ -44,27 +46,17 @@ def test_unknown_type(pkg):
 SEQUENCE_TYPES = pkg_parameterize(
     SUPPORTED_JSON_PACKAGES,
     (
-        ([123, 'foo', True], '[123, "foo", true]'),
-        ((123, 'foo', True), '[123, "foo", true]'),
-        (CustomUserList([123, 'foo', True]), '[123, "foo", true]'),
+        ([123, 'foo', True], None),
+        ((123, 'foo', True), None),
+        (CustomUserList([123, 'foo', True]), None),
+        (set([123, 'foo', True]), None),
+        (frozenset([123, 'foo', True]), None),
     ),
 )
 
 @pytest.mark.parametrize('pkg,value,expected', SEQUENCE_TYPES)
 def test_sequence_types(pkg, value, expected):
-    assert to_json(value, pkg=pkg) == expected
-
-
-@pytest.mark.parametrize('pkg', SUPPORTED_JSON_PACKAGES)
-def test_set_types(pkg):
-    out = to_json(set([123, 'foo', True]), pkg=pkg)
-    assert out.startswith('[')
-    assert out.endswith(']')
-    assert '123' in out
-    assert 'true' in out
-    assert '"foo"' in out
-
-    out = to_json(frozenset([123, 'foo', True]), pkg=pkg)
+    out = to_json(value, pkg=pkg)
     assert out.startswith('[')
     assert out.endswith(']')
     assert '123' in out
@@ -83,21 +75,25 @@ dd['foo'] = 123
 DICT_TYPES = pkg_parameterize(
     SUPPORTED_JSON_PACKAGES,
     (
-        ({'foo': 123}, '{"foo": 123}'),
-        (od, '{"foo": 123, "zzz": true, "bar": "foo"}'),
-        (CustomNamedTuple(123), '{"foo": 123}'),
-        (CustomUserDict({'foo': 123}), '{"foo": 123}'),
-        (dd, '{"foo": 123}'),
+        ({'foo': 123}, '{"foo":123}'),
+        (od, '{"foo":123,"zzz":true,"bar":"foo"}'),
+        (CustomNamedTuple(123), '{"foo":123}'),
+        (CustomUserDict({'foo': 123}), '{"foo":123}'),
+        (dd, '{"foo":123}'),
     ),
 )
 
 @pytest.mark.parametrize('pkg,value,expected', DICT_TYPES)
 def test_dict_types(pkg, value, expected):
-    assert to_json(value, pkg=pkg) == expected
+    assert to_json(value, pkg=pkg).replace(" ", "") == expected
 
 
 @pytest.mark.parametrize('pkg', SUPPORTED_JSON_PACKAGES)
 def test_pretty(pkg):
+    if pkg == 'hyperjson':
+        # hyperjson doesn't make pretties
+        return
+
     assert to_json([1,2,3], pretty=True, pkg=pkg) == """[
   1,
   2,

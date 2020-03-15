@@ -122,8 +122,12 @@ For TOML, it supports `toml <https://pypi.org/project/toml>`_, `pytoml
 and `tomlkit <https://pypi.org/project/tomlkit>`_.
 
 For JSON, it supports Python's built-in `json
-<https://docs.python.org/3/library/json.html>`_ module and `simplejson
-<https://pypi.org/project/simplejson>`_.
+<https://docs.python.org/3/library/json.html>`_ module, `simplejson
+<https://pypi.org/project/simplejson>`_, `orjson
+<https://pypi.org/project/orjson>`_, `rapidjson
+<https://pypi.org/project/python-rapidjson>`_, `ujson
+<https://pypi.org/project/ujson>`_, and `hyperjson
+<https://pypi.org/project/hyperjson>`_.
 
 JSON::
 
