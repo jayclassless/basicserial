@@ -3,6 +3,9 @@ from .common import *
 from basicserial import to_yaml, from_yaml, SUPPORTED_YAML_PACKAGES
 
 
+SUPPORTED_YAML_PACKAGES = strip_missing_pkg(SUPPORTED_YAML_PACKAGES)
+
+
 SIMPLE_TYPES = pkg_parameterize(
     SUPPORTED_YAML_PACKAGES,
     (

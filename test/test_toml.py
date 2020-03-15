@@ -3,6 +3,9 @@ from .common import *
 from basicserial import to_toml, from_toml, SUPPORTED_TOML_PACKAGES
 
 
+SUPPORTED_TOML_PACKAGES = strip_missing_pkg(SUPPORTED_TOML_PACKAGES)
+
+
 def q(pkg, value):
     if pkg == 'qtoml':
         if value.startswith('"'):

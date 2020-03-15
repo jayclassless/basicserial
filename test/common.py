@@ -8,6 +8,8 @@ from uuid import uuid4
 
 import pytest
 
+from basicserial.util import get_implementation
+
 
 class CustomUserDict(UserDict):
     pass
@@ -43,4 +45,16 @@ def pkg_parameterize(packages, vectors):
         for pkg in packages
         for test, expected in vectors
     )
+
+
+def strip_missing_pkg(supported):
+    stripped = []
+    for pkg in supported:
+        try:
+            get_implementation(hash(supported), supported, pkg)
+        except ValueError:
+            pass
+        else:
+            stripped.append(pkg)
+    return stripped
 

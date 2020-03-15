@@ -7,10 +7,10 @@ pyyaml
 ruamel.yaml
 pytoml
 toml
-qtoml
+qtoml; python_version >= '3.6'
 tomlkit
 simplejson
-orjson
+orjson; python_version >= '3.6'
 python-rapidjson
 ujson
 hyperjson

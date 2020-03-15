@@ -3,6 +3,9 @@ from .common import *
 from basicserial import to_json, from_json, SUPPORTED_JSON_PACKAGES
 
 
+SUPPORTED_JSON_PACKAGES = strip_missing_pkg(SUPPORTED_JSON_PACKAGES)
+
+
 SIMPLE_TYPES = pkg_parameterize(
     SUPPORTED_JSON_PACKAGES,
     (
