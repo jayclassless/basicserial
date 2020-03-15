@@ -103,7 +103,7 @@ do the following for you when working with JSON, YAML, and TOML:
        - string
        - string
 
-* Can serialize `Enum <https://docs.python.org/3/library/enum.html>` members
+* Can serialize `Enum <https://docs.python.org/3/library/enum.html>`_ members
   appropriately based on their type.
 
 * Can automatically deserialize dates, times, and datetimes into the native
@@ -116,22 +116,25 @@ Usage
 =====
 To use this package, install it from PyPI (``pip install basicserial``). Then,
 make sure you install the serialization package you'd like ``basicserial`` to
-use.
+use:
 
-For YAML, it supports `PyYAML <https://pypi.org/project/PyYAML>`_ and
-`ruamel.yaml <https://pypi.org/project/ruamel.yaml>`_.
+* For YAML, it supports `PyYAML <https://pypi.org/project/PyYAML>`_ and
+  `ruamel.yaml <https://pypi.org/project/ruamel.yaml>`_.
+* For TOML, it supports `toml <https://pypi.org/project/toml>`_, `pytoml
+  <https://pypi.org/project/pytoml>`_, `qtoml
+  <https://pypi.org/project/qtoml>`_, and `tomlkit
+  <https://pypi.org/project/tomlkit>`_.
+* For JSON, it supports Python's built-in `json
+  <https://docs.python.org/3/library/json.html>`_ module, `simplejson
+  <https://pypi.org/project/simplejson>`_, `orjson
+  <https://pypi.org/project/orjson>`_, `rapidjson
+  <https://pypi.org/project/python-rapidjson>`_, `ujson
+  <https://pypi.org/project/ujson>`_, and `hyperjson
+  <https://pypi.org/project/hyperjson>`_.
 
-For TOML, it supports `toml <https://pypi.org/project/toml>`_, `pytoml
-<https://pypi.org/project/pytoml>`_, `qtoml <https://pypi.org/project/qtoml>`_,
-and `tomlkit <https://pypi.org/project/tomlkit>`_.
-
-For JSON, it supports Python's built-in `json
-<https://docs.python.org/3/library/json.html>`_ module, `simplejson
-<https://pypi.org/project/simplejson>`_, `orjson
-<https://pypi.org/project/orjson>`_, `rapidjson
-<https://pypi.org/project/python-rapidjson>`_, `ujson
-<https://pypi.org/project/ujson>`_, and `hyperjson
-<https://pypi.org/project/hyperjson>`_.
+``basicserial`` will automatically find a package to use, but if you want to
+use a specific one, you can specify its name via the ``pkg`` argument to the
+functions.
 
 JSON::
 
