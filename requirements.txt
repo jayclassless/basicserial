@@ -4,4 +4,9 @@ pytz
 twine
 wheel
 pyyaml
+ruamel.yaml
 pytoml
+toml
+qtoml
+tomlkit
+simplejson

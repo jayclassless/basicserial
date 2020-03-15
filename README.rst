@@ -111,14 +111,19 @@ do the following for you when working with JSON, YAML, and TOML:
 Usage
 =====
 To use this package, install it from PyPI (``pip install basicserial``). Then,
-if you want to use YAML or TOML, you'll also need to install a package that
-provides that functionality (for YAML ``basicserial`` supports `PyYAML
-<https://pypi.org/project/PyYAML>`_ and `ruamel.yaml
-<https://pypi.org/project/ruamel.yaml>`_, for TOML it supports `toml
-<https://pypi.org/project/toml>`_ or `pytoml
-<https://pypi.org/project/pytoml>`_). ``basicserial`` will use Python's
-built-in `json <https://docs.python.org/3/library/json.html>`_ module to handle
-JSON.
+make sure you install the serialization package you'd like ``basicserial`` to
+use.
+
+For YAML, it supports `PyYAML <https://pypi.org/project/PyYAML>`_ and
+`ruamel.yaml <https://pypi.org/project/ruamel.yaml>`_.
+
+For TOML, it supports `toml <https://pypi.org/project/toml>`_, `pytoml
+<https://pypi.org/project/pytoml>`_, `qtoml <https://pypi.org/project/qtoml>`_,
+and `tomlkit <https://pypi.org/project/tomlkit>`_.
+
+For JSON, it supports Python's built-in `json
+<https://docs.python.org/3/library/json.html>`_ module and `simplejson
+<https://pypi.org/project/simplejson>`_.
 
 JSON::
 
