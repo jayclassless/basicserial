@@ -98,6 +98,10 @@ do the following for you when working with JSON, YAML, and TOML:
        - string
        - string
        - string
+     * - `UUID <https://docs.python.org/3/library/uuid.html#uuid.UUID>`_
+       - string
+       - string
+       - string
 
 * Can serialize `Enum <https://docs.python.org/3/library/enum.html>` members
   appropriately based on their type.

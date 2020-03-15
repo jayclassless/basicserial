@@ -9,6 +9,7 @@ basicserial Change Log
 ===========
 
 * Added support for handling ``enum.Enum`` members.
+* Added support for handling ``uuid.UUID`` objects.
 * Added the ability to explicitly specify the serialization package to use via
   a ``pkg`` argument.
 * Added support for using the ``simplejson``, ``orjson``, ``rapidjson``,

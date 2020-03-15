@@ -6,6 +6,7 @@ import datetime
 import decimal
 import enum
 import fractions
+import uuid
 
 from collections import (
     OrderedDict,
@@ -42,7 +43,7 @@ def _make_toml_friendly(value):
     if isinstance(value, (datetime.date, datetime.time)):
         return value.isoformat()
 
-    if isinstance(value, (UserString, complex, fractions.Fraction)):
+    if isinstance(value, (UserString, complex, fractions.Fraction, uuid.UUID)):
         return str(value)
 
     if isinstance(value, enum.Enum):

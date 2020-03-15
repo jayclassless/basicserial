@@ -6,6 +6,7 @@ import datetime
 import decimal
 import enum
 import fractions
+import uuid
 
 from collections import (
     defaultdict,
@@ -46,6 +47,9 @@ def _build_dumper(yaml):
         def complex_representer(self, data):
             return self.represent_scalar('tag:yaml.org,2002:str', str(data))
 
+        def uuid_representer(self, data):
+            return self.represent_scalar('tag:yaml.org,2002:str', str(data))
+
         def enum_representer(self, data):
             return self.represent_data(data.value)
 
@@ -70,6 +74,7 @@ def _build_dumper(yaml):
         (UserString, BasicYamlDumper.userstring_representer),
         (complex, BasicYamlDumper.complex_representer),
         (fractions.Fraction, BasicYamlDumper.complex_representer),
+        (uuid.UUID, BasicYamlDumper.uuid_representer),
         (None, BasicYamlDumper.unknown_representer),
     )
 

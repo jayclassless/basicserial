@@ -24,6 +24,7 @@ SIMPLE_TYPES = pkg_parameterize(
         (CustomEnum.an_int, '1\n...'),
         (CustomEnum.a_str, 'foo\n...'),
         (CustomEnum.a_bool, 'false\n...'),
+        (SOME_UUID, f'{str(SOME_UUID)}\n...'),
     ),
 )
 

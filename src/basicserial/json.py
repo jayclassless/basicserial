@@ -6,6 +6,7 @@ import datetime
 import decimal
 import fractions
 import enum
+import uuid
 
 from collections import (
     UserDict,
@@ -43,6 +44,7 @@ ENCODINGS = (
     (frozenset, list),
     (complex, str),
     (UserString, lambda x: x.data),
+    (uuid.UUID, str),
 )
 
 

@@ -4,6 +4,7 @@ from datetime import date, time, datetime
 from decimal import Decimal
 from fractions import Fraction
 from pytz import timezone
+from uuid import uuid4
 
 import pytest
 
@@ -31,6 +32,9 @@ CustomNamedTuple = namedtuple('CustomNamedTuple', ['foo'])
 
 TZ_EST = timezone('America/New_York')
 TZ_UTC = timezone('UTC')
+
+
+SOME_UUID = uuid4()
 
 
 def pkg_parameterize(packages, vectors):
