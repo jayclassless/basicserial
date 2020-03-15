@@ -12,6 +12,7 @@ from collections import (
     UserDict,
     UserList,
     UserString,
+    OrderedDict,
 )
 
 from .util import get_date_or_string, get_implementation, convert_datetimes
@@ -53,10 +54,10 @@ def _make_json_friendly(value):
         return _make_json_friendly(value._asdict())
 
     if isinstance(value, (dict, UserDict)):
-        return {
-            key: _make_json_friendly(value[key])
+        return OrderedDict([
+            (key, _make_json_friendly(value[key]))
             for key in value
-        }
+        ])
 
     if isinstance(value, (list, set, frozenset, tuple, UserList)):
         return [
@@ -72,6 +73,12 @@ def _make_json_friendly(value):
             return encoder(value)
 
     return value
+
+
+def orjson_default(value):
+    if isinstance(value, OrderedDict):
+        return dict(value)
+    raise TypeError
 
 
 def to_json(value, pretty=False, pkg=None):
@@ -99,6 +106,7 @@ def to_json(value, pretty=False, pkg=None):
     options = {}
 
     if pkg == 'orjson':
+        options['default'] = orjson_default
         if pretty:
             options['option'] = json.OPT_INDENT_2
     else:
