@@ -7,7 +7,6 @@ requires = [
 [tool.tidypy]
 exclude = [
     '.venv/.*',
-    'docs/source/conf.py',
     'test/.*',
     'build/.*',
     'dist/.*',
@@ -32,10 +31,10 @@ disabled = [
 disabled = [
     'missing-docstring',
     'trailing-newlines',
+    'duplicate-code',
 ]
 [tool.tidypy.pylint.options]
 min-public-methods = 0
-max-returns = 7
 
 [tool.tidypy.pyflakes]
 disabled = [

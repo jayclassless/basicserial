@@ -21,7 +21,7 @@ from .util import convert_datetimes, get_implementation
 SUPPORTED_PACKAGES = ('pytoml', 'toml', 'qtoml', 'tomlkit')
 
 
-def _make_toml_friendly(value):
+def _make_toml_friendly(value):  # noqa: too-many-return-statements
     if isinstance(value, tuple) and hasattr(value, '_fields'):
         return _make_toml_friendly(value._asdict())
 

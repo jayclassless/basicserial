@@ -24,7 +24,7 @@ SUPPORTED_PACKAGES = ('yaml', 'ruamel.yaml')
 
 
 @lru_cache()
-def _build_dumper(yaml):
+def _build_dumper(yaml):  # noqa: complex
     class BasicYamlDumper(yaml.SafeDumper):  # noqa: too-many-ancestors
         def list_representer(self, data):
             return self.represent_sequence('tag:yaml.org,2002:seq', list(data))
@@ -39,7 +39,10 @@ def _build_dumper(yaml):
             return self.represent_scalar('tag:yaml.org,2002:float', str(data))
 
         def time_representer(self, data):
-            return self.represent_scalar('tag:yaml.org,2002:str', data.isoformat())
+            return self.represent_scalar(
+                'tag:yaml.org,2002:str',
+                data.isoformat(),
+            )
 
         def userstring_representer(self, data):
             return self.represent_scalar('tag:yaml.org,2002:str', data.data)
@@ -123,7 +126,7 @@ def to_yaml(value, pretty=False, pkg=None):
 @lru_cache()
 def _build_loaders(yaml):
     class StringedDatesYamlLoader(yaml.SafeLoader):
-        # pylint: disable=too-many-ancestors,no-self-use
+        # pylint: disable=no-self-use
 
         def timestamp_constructor(self, node):
             return node.value
@@ -133,9 +136,8 @@ def _build_loaders(yaml):
         StringedDatesYamlLoader.timestamp_constructor,
     )
 
-
     class NativeDatesYamlLoader(yaml.SafeLoader):
-        # pylint: disable=too-many-ancestors,no-self-use
+        # pylint: disable=no-self-use
 
         def timestamp_constructor(self, node):
             return get_date_or_string(node.value)
