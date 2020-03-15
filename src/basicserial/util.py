@@ -23,7 +23,7 @@ def get_implementation(scope, supported, pkg):
             try:
                 _IMPLEMENTATIONS[scope][impl] = import_module(impl)
             except ImportError:
-                pass
+                _IMPLEMENTATIONS[scope][impl] = None
 
     if pkg:
         if pkg in _IMPLEMENTATIONS[scope]:
