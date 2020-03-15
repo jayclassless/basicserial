@@ -9,7 +9,7 @@ SUPPORTED_TOML_PACKAGES = strip_missing_pkg(SUPPORTED_TOML_PACKAGES)
 def q(pkg, value):
     if pkg == 'qtoml':
         if value.startswith('"'):
-            return f"'{value[1:-1]}'"
+            return "'%s'" % (value[1:-1],)
     return value
 
 
@@ -36,7 +36,7 @@ SIMPLE_TYPES = pkg_parameterize(
         (CustomEnum.an_int, '1'),
         (CustomEnum.a_str, '"foo"'),
         (CustomEnum.a_bool, 'false'),
-        (SOME_UUID, f'"{str(SOME_UUID)}"'),
+        (SOME_UUID, '"%s"' % (str(SOME_UUID),)),
     ),
 )
 

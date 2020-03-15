@@ -30,7 +30,7 @@ SIMPLE_TYPES = pkg_parameterize(
         (CustomEnum.an_int, '1'),
         (CustomEnum.a_str, '"foo"'),
         (CustomEnum.a_bool, 'false'),
-        (SOME_UUID, f'"{str(SOME_UUID)}"'),
+        (SOME_UUID, '"%s"' % (str(SOME_UUID),)),
     ),
 )
 

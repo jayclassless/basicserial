@@ -27,7 +27,7 @@ SIMPLE_TYPES = pkg_parameterize(
         (CustomEnum.an_int, '1\n...'),
         (CustomEnum.a_str, 'foo\n...'),
         (CustomEnum.a_bool, 'false\n...'),
-        (SOME_UUID, f'{str(SOME_UUID)}\n...'),
+        (SOME_UUID, '%s\n...' % (str(SOME_UUID),)),
     ),
 )
 
@@ -48,7 +48,7 @@ TIME_TYPES = pkg_parameterize(
 @pytest.mark.parametrize('pkg,value,expected', TIME_TYPES)
 def test_time_types(pkg, value, expected):
     if pkg == 'ruamel.yaml':
-        expected = f"{expected[1:-1]}\n..."
+        expected = expected[1:-1] + "\n..."
     assert to_yaml(value, pkg=pkg) == expected
 
 
