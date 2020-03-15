@@ -10,7 +10,7 @@ toml
 qtoml; python_version >= '3.6'
 tomlkit
 simplejson
-orjson; python_version >= '3.6'
+orjson; implementation_name == 'cpython' and python_version >= '3.6'
 python-rapidjson
 ujson
 hyperjson; implementation_name == 'cpython'
