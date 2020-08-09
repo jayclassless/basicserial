@@ -48,6 +48,7 @@ orjson = { version = "*", python = ">=3.6", markers = "implementation_name == 'c
 python-rapidjson = "*"
 ujson = "*"
 hyperjson = { version = "*", markers = "implementation_name == 'cpython'" }
+pysimdjson = "*"
 
 
 [tool.pytest.ini_options]

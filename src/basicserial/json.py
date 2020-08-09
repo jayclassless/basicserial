@@ -25,6 +25,7 @@ SUPPORTED_PACKAGES = (
     'rapidjson',
     'ujson',
     'hyperjson',
+    'simdjson',
 )
 
 

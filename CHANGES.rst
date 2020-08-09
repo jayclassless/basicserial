@@ -5,6 +5,12 @@ basicserial Change Log
 .. contents:: Releases
 
 
+1.2.0 (TBD)
+===========
+
+* Added support for using the ``pysimdjson`` library.
+
+
 1.1.0 (2020-03-15)
 ==================
 
