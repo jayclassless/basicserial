@@ -131,7 +131,7 @@ use:
   <https://pypi.org/project/python-rapidjson>`_, `ujson
   <https://pypi.org/project/ujson>`_, `hyperjson
   <https://pypi.org/project/hyperjson>`_, and `pysimdjson
-  <https://pypi.org/project/pysimdjson>`.
+  <https://pypi.org/project/pysimdjson>`_.
 
 ``basicserial`` will automatically find a package to use, but if you want to
 use a specific one, you can specify its name via the ``pkg`` argument to the
