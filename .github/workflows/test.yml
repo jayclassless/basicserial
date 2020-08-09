@@ -36,5 +36,7 @@ jobs:
           make env
 
       - name: Test
-        run: make test
+        run: |
+          source $HOME/.poetry/env
+          make test
 
