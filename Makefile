@@ -1,41 +1,26 @@
-VENV = .venv
-BINDIR = $(if $(wildcard ${VENV}/bin), '${VENV}/bin/', '')
-
 
 setup::
-	@python -m venv ${VENV}
-	@${MAKE} install
+	@poetry install
 
-setup-ci:: install
-
-install::
-	@${BINDIR}pip install --upgrade pip
-	@${BINDIR}pip install -r requirements.txt
-	@${BINDIR}pip install -e .
-
-freeze::
-	@${BINDIR}python --version
-	@${BINDIR}pip --version
-	@${BINDIR}pip freeze
+env::
+	@poetry self --version
+	@poetry version
+	@poetry env info
+	@poetry show --all
 
 clean::
-	@rm -rf dist build .cache .pytest_cache pip-wheel-metadata .coverage.*
+	@rm -rf dist .coverage poetry.lock
 
 clean-full:: clean
-	@rm -rf .venv
-
+	@poetry env remove `poetry run which python`
 
 test::
-	@${BINDIR}coverage run --rcfile=setup.cfg --module py.test
-	@${BINDIR}coverage report --rcfile=setup.cfg
+	@poetry run coverage run --module py.test
+	@poetry run coverage report
 
-test-ci:: test
-
-
-build:: clean
-	@${BINDIR}python setup.py sdist
-	@${BINDIR}python setup.py bdist_wheel
+build::
+	@poetry build
 
 publish::
-	@${BINDIR}twine upload dist/*
+	@poetry publish
 
