@@ -1,5 +1,0 @@
-include README.rst LICENSE.rst CHANGES.rst
-exclude Makefile Pipfile pyproject.toml requirements.txt .python-version
-prune test
-prune docs
-
