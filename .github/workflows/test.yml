@@ -20,23 +20,22 @@ jobs:
 
     steps:
       - name: Setup Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install Poetry
+        uses: jayclassless/setup-poetry-action@v1
+
       - name: Checkout Code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Install
         run: |
-          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py -o get-poetry.py
-          python get-poetry.py
-          source $HOME/.poetry/env
           make setup
           make env
 
       - name: Test
         run: |
-          source $HOME/.poetry/env
           make test
 
