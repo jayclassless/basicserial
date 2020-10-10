@@ -47,7 +47,7 @@ simplejson = "*"
 orjson = { version = "*", python = ">=3.6", markers = "implementation_name == 'cpython'" }
 python-rapidjson = "*"
 ujson = "*"
-hyperjson = { version = "*", markers = "implementation_name == 'cpython'" }
+hyperjson = { version = "*", python = "<3.9", markers = "implementation_name == 'cpython'" }
 pybind11 = "*"
 pysimdjson = "*"
 
