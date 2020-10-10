@@ -41,13 +41,13 @@ pyyaml = "*"
 "ruamel.yaml" = "*"
 pytoml = "*"
 toml = "*"
-qtoml = { version = "*", python = ">=3.6" }
+qtoml = "*"
 tomlkit = "*"
 simplejson = "*"
-orjson = { version = "*", python = ">=3.6", markers = "implementation_name == 'cpython'" }
+orjson = { version = "*", markers = "implementation_name == 'cpython'" }
 python-rapidjson = "*"
 ujson = "*"
-hyperjson = { version = "*", python = "<3.9", markers = "implementation_name == 'cpython'" }
+hyperjson = { version = "*", markers = "python_version < '3.9' and implementation_name == 'cpython'" }
 pybind11 = "*"
 pysimdjson = "*"
 
