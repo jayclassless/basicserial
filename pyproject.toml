@@ -43,6 +43,8 @@ pytoml = "*"
 toml = "*"
 qtoml = "*"
 tomlkit = "*"
+tomli = "*"
+tomli_w = "*"
 simplejson = "*"
 orjson = { version = "*", markers = "implementation_name == 'cpython'" }
 python-rapidjson = "*"

@@ -18,7 +18,7 @@ from collections import (
 from .util import convert_datetimes, get_implementation
 
 
-SUPPORTED_PACKAGES = ('pytoml', 'toml', 'qtoml', 'tomlkit')
+SUPPORTED_PACKAGES = ('pytoml', 'toml', 'qtoml', 'tomlkit', 'tomli', 'tomli_w')
 
 
 def _make_toml_friendly(value):  # noqa: too-many-return-statements
@@ -68,6 +68,8 @@ def to_toml(value, pretty=False, pkg=None):  # noqa: unused-argument
     :rtype: str
     """
 
+    pkg = 'tomli_w' if pkg == 'tomli' else pkg
+
     return get_implementation(
         'TOML',
         SUPPORTED_PACKAGES,
@@ -91,6 +93,8 @@ def from_toml(value, native_datetimes=True, pkg=None):
         first supported package found in the environment
     :type pkg: str
     """
+
+    pkg = 'tomli' if pkg == 'tomli_w' else pkg
 
     result = get_implementation(
         'TOML',

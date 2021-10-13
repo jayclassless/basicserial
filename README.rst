@@ -122,8 +122,9 @@ use:
   `ruamel.yaml <https://pypi.org/project/ruamel.yaml>`_.
 * For TOML, it supports `toml <https://pypi.org/project/toml>`_, `pytoml
   <https://pypi.org/project/pytoml>`_, `qtoml
-  <https://pypi.org/project/qtoml>`_, and `tomlkit
-  <https://pypi.org/project/tomlkit>`_.
+  <https://pypi.org/project/qtoml>`_, `tomlkit
+  <https://pypi.org/project/tomlkit>`_, and `tomli
+  <https://pypi.org/project/tomli>`_/`tomli-w <https://pypi.org/project/tomli_w>`_.
 * For JSON, it supports Python's built-in `json
   <https://docs.python.org/3/library/json.html>`_ module, `simplejson
   <https://pypi.org/project/simplejson>`_, `orjson
