@@ -16,8 +16,7 @@ jobs:
           - 3.7
           - 3.8
           - 3.9
-          # Currently Poetry issues with 3.10? Revisit this.
-          # - '3.10'
+          - '3.10'
           - pypy3
 
     runs-on: ubuntu-latest
@@ -42,4 +41,3 @@ jobs:
       - name: Test
         run: |
           make test
-
