@@ -15,17 +15,11 @@ from collections import (
     OrderedDict,
 )
 
-from .util import get_date_or_string, get_implementation, convert_datetimes
-
-
-SUPPORTED_PACKAGES = (
-    'json',
-    'simplejson',
-    'orjson',
-    'rapidjson',
-    'ujson',
-    'hyperjson',
-    'simdjson',
+from .util import (
+    get_date_or_string,
+    convert_datetimes,
+    Implementation,
+    ImplementationRegistry,
 )
 
 
@@ -76,10 +70,94 @@ def _make_json_friendly(value):
     return value
 
 
-def orjson_default(value):
-    if isinstance(value, OrderedDict):
-        return dict(value)
-    raise TypeError
+class JsonImplementation(Implementation):
+    def serialize(self, value, pretty=False):
+        raise NotImplementedError
+
+    def deserialize(self, value, native_datetimes=True):
+        result = self._module.loads(value)
+
+        if native_datetimes:
+            if isinstance(result, (dict, list)):
+                result = convert_datetimes(result)
+            elif isinstance(result, str):
+                result = get_date_or_string(result)
+
+        return result
+
+
+class StdlibJsonImplementation(JsonImplementation):
+    module_name = 'json'
+
+    def serialize(self, value, pretty=False):
+        opts = {
+            'sort_keys': False,
+        }
+        if pretty:
+            opts['indent'] = 2
+            opts['separators'] = (',', ': ')
+        return self._module.dumps(value, **opts)
+
+
+class SimpleJsonImplementation(StdlibJsonImplementation):
+    module_name = 'simplejson'
+
+
+class OrJsonImplementation(JsonImplementation):
+    module_name = 'orjson'
+
+    def _default(self, value):  # noqa: no-self-use
+        if isinstance(value, OrderedDict):
+            return dict(value)
+        raise TypeError
+
+    def serialize(self, value, pretty=False):
+        opts = {
+            'default': self._default,
+        }
+        if pretty:
+            opts['option'] = self._module.OPT_INDENT_2
+        return self._module.dumps(value, **opts).decode('utf-8')
+
+
+class RapidJsonImplementation(JsonImplementation):
+    module_name = 'rapidjson'
+
+    def serialize(self, value, pretty=False):
+        opts = {
+            'sort_keys': False,
+        }
+        if pretty:
+            opts['indent'] = 2
+        return self._module.dumps(value, **opts)
+
+
+class UJsonImplementation(RapidJsonImplementation):
+    module_name = 'ujson'
+
+
+class HyperJsonImplementation(JsonImplementation):
+    module_name = 'hyperjson'
+
+    def serialize(self, value, pretty=False):
+        opts = {
+            'sort_keys': False,
+        }
+        return self._module.dumps(value, **opts)
+
+
+class SimdJsonImplementation(StdlibJsonImplementation):
+    module_name = 'simdjson'
+
+
+IMPLEMENTATIONS = ImplementationRegistry()
+IMPLEMENTATIONS.register('json', StdlibJsonImplementation)
+IMPLEMENTATIONS.register('simplejson', SimpleJsonImplementation)
+IMPLEMENTATIONS.register('orjson', OrJsonImplementation)
+IMPLEMENTATIONS.register('rapidjson', RapidJsonImplementation)
+IMPLEMENTATIONS.register('ujson', UJsonImplementation)
+IMPLEMENTATIONS.register('hyperjson', HyperJsonImplementation)
+IMPLEMENTATIONS.register('simdjson', SimdJsonImplementation)
 
 
 def to_json(value, pretty=False, pkg=None):
@@ -98,30 +176,8 @@ def to_json(value, pretty=False, pkg=None):
     :rtype: str
     """
 
-    json = get_implementation(
-        'JSON',
-        SUPPORTED_PACKAGES,
-        pkg,
-    )
-
-    options = {}
-
-    if pkg == 'orjson':
-        options['default'] = orjson_default
-        if pretty:
-            options['option'] = json.OPT_INDENT_2
-    else:
-        options['sort_keys'] = False
-        if pretty and pkg not in ('hyperjson',):
-            options['indent'] = 2
-            if pkg not in ('rapidjson', 'ujson'):
-                options['separators'] = (',', ': ')
-
-    encoded = json.dumps(_make_json_friendly(value), **options)
-    if pkg == 'orjson':
-        encoded = encoded.decode('utf-8')
-
-    return encoded
+    impl = IMPLEMENTATIONS.get(pkg)
+    return impl.serialize(_make_json_friendly(value), pretty=pretty)
 
 
 def from_json(value, native_datetimes=True, pkg=None):
@@ -141,19 +197,5 @@ def from_json(value, native_datetimes=True, pkg=None):
     :type pkg: str
     """
 
-    json = get_implementation(
-        'JSON',
-        SUPPORTED_PACKAGES,
-        pkg,
-    )
-
-    result = json.loads(value)
-
-    if native_datetimes:
-        if isinstance(result, (dict, list)):
-            result = convert_datetimes(result)
-        elif isinstance(result, str):
-            result = get_date_or_string(result)
-
-    return result
-
+    impl = IMPLEMENTATIONS.get(pkg)
+    return impl.deserialize(value, native_datetimes=native_datetimes)

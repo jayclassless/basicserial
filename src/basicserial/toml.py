@@ -14,11 +14,64 @@ from collections import (
     UserList,
     UserString,
 )
+from importlib import import_module
 
-from .util import convert_datetimes, get_implementation
+from .util import convert_datetimes, Implementation, ImplementationRegistry
 
 
-SUPPORTED_PACKAGES = ('pytoml', 'toml', 'qtoml', 'tomlkit', 'tomli', 'tomli_w')
+class TomlImplementation(Implementation):
+    def serialize(self, value, pretty=False):
+        return self._module.dumps(value).rstrip()
+
+    def deserialize(self, value, native_datetimes=True):
+        result = self._module.loads(value)
+
+        if native_datetimes:
+            result = convert_datetimes(result)
+
+        return result
+
+
+class PyTomlImplementation(TomlImplementation):
+    module_name = 'pytoml'
+
+
+class PlainTomlImplementation(TomlImplementation):
+    module_name = 'toml'
+
+
+class QTomlImplementation(TomlImplementation):
+    module_name = 'qtoml'
+
+
+class TomlKitTomlImplementation(TomlImplementation):
+    module_name = 'tomlkit'
+
+
+class TomliTomlImplementation(TomlImplementation):
+    module_name = 'tomli'
+
+    def __init__(self):
+        super().__init__()
+
+        try:
+            self._write_module = import_module('tomli_w')
+        except ImportError:
+            self._write_module = None
+
+    def is_available(self):
+        return super().is_available() and self._write_module is not None
+
+    def serialize(self, value, pretty=False):
+        return self._write_module.dumps(value).rstrip()
+
+
+IMPLEMENTATIONS = ImplementationRegistry()
+IMPLEMENTATIONS.register('pytoml', PyTomlImplementation)
+IMPLEMENTATIONS.register('toml', PlainTomlImplementation)
+IMPLEMENTATIONS.register('qtoml', QTomlImplementation)
+IMPLEMENTATIONS.register('tomlkit', TomlKitTomlImplementation)
+IMPLEMENTATIONS.register('tomli', TomliTomlImplementation)
 
 
 def _make_toml_friendly(value):  # noqa: too-many-return-statements
@@ -52,7 +105,7 @@ def _make_toml_friendly(value):  # noqa: too-many-return-statements
     return value
 
 
-def to_toml(value, pretty=False, pkg=None):  # noqa: unused-argument
+def to_toml(value, pretty=False, pkg=None):
     """
     Serializes the given value to TOML.
 
@@ -68,13 +121,8 @@ def to_toml(value, pretty=False, pkg=None):  # noqa: unused-argument
     :rtype: str
     """
 
-    pkg = 'tomli_w' if pkg == 'tomli' else pkg
-
-    return get_implementation(
-        'TOML',
-        SUPPORTED_PACKAGES,
-        pkg,
-    ).dumps(_make_toml_friendly(value)).rstrip()
+    impl = IMPLEMENTATIONS.get(pkg)
+    return impl.serialize(_make_toml_friendly(value), pretty=pretty)
 
 
 def from_toml(value, native_datetimes=True, pkg=None):
@@ -94,16 +142,5 @@ def from_toml(value, native_datetimes=True, pkg=None):
     :type pkg: str
     """
 
-    pkg = 'tomli' if pkg == 'tomli_w' else pkg
-
-    result = get_implementation(
-        'TOML',
-        SUPPORTED_PACKAGES,
-        pkg,
-    ).loads(value)
-
-    if native_datetimes:
-        result = convert_datetimes(result)
-
-    return result
-
+    impl = IMPLEMENTATIONS.get(pkg)
+    return impl.deserialize(value, native_datetimes=native_datetimes)

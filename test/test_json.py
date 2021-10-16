@@ -2,14 +2,11 @@ import sys
 
 from .common import *
 
-from basicserial import to_json, from_json, SUPPORTED_JSON_PACKAGES
-
-
-SUPPORTED_JSON_PACKAGES = strip_missing_pkg(SUPPORTED_JSON_PACKAGES)
+from basicserial import to_json, from_json, AVAILABLE_JSON_PACKAGES
 
 
 SIMPLE_TYPES = pkg_parameterize(
-    SUPPORTED_JSON_PACKAGES,
+    AVAILABLE_JSON_PACKAGES,
     (
         (123, '123'),
         (123.45, '123.45'),
@@ -43,14 +40,14 @@ def test_simple_types(pkg, value, expected):
     assert to_json(value, pkg=pkg) == expected
 
 
-@pytest.mark.parametrize('pkg', SUPPORTED_JSON_PACKAGES)
+@pytest.mark.parametrize('pkg', AVAILABLE_JSON_PACKAGES)
 def test_unknown_type(pkg):
     with pytest.raises(Exception):
         to_json(object(), pkg=pkg)
 
 
 SEQUENCE_TYPES = pkg_parameterize(
-    SUPPORTED_JSON_PACKAGES,
+    AVAILABLE_JSON_PACKAGES,
     (
         ([123, 'foo', True], None),
         ((123, 'foo', True), None),
@@ -86,14 +83,14 @@ DICT_TYPES = [
 ]
 if sys.version_info.major >= 3 and sys.version_info.minor >= 6:
     DICT_TYPES.append((od, '{"foo":123,"zzz":true,"bar":"foo"}'))
-DICT_TYPES = pkg_parameterize(SUPPORTED_JSON_PACKAGES, DICT_TYPES)
+DICT_TYPES = pkg_parameterize(AVAILABLE_JSON_PACKAGES, DICT_TYPES)
 
 @pytest.mark.parametrize('pkg,value,expected', DICT_TYPES)
 def test_dict_types(pkg, value, expected):
     assert to_json(value, pkg=pkg).replace(" ", "") == expected
 
 
-@pytest.mark.parametrize('pkg', SUPPORTED_JSON_PACKAGES)
+@pytest.mark.parametrize('pkg', AVAILABLE_JSON_PACKAGES)
 def test_pretty(pkg):
     if pkg == 'hyperjson':
         # hyperjson doesn't make pretties
@@ -148,7 +145,7 @@ ALL_TYPES = """{
 }"""
 
 
-@pytest.mark.parametrize('pkg', SUPPORTED_JSON_PACKAGES)
+@pytest.mark.parametrize('pkg', AVAILABLE_JSON_PACKAGES)
 def test_parse(pkg):
     parsed = from_json(ALL_TYPES, pkg=pkg)
     assert parsed['null'] is None
@@ -186,7 +183,7 @@ def test_parse(pkg):
     assert from_json('"2018-05-22"', pkg=pkg) == date(2018, 5, 22)
 
 
-@pytest.mark.parametrize('pkg', SUPPORTED_JSON_PACKAGES)
+@pytest.mark.parametrize('pkg', AVAILABLE_JSON_PACKAGES)
 def test_parse_no_datetime(pkg):
     parsed = from_json(ALL_TYPES, native_datetimes=False, pkg=pkg)
     assert parsed['null'] is None

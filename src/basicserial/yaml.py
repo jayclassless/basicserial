@@ -15,81 +15,171 @@ from collections import (
     UserList,
     UserString,
 )
-from functools import lru_cache
 
-from .util import get_date_or_string, get_implementation
-
-
-SUPPORTED_PACKAGES = ('yaml', 'ruamel.yaml')
+from .util import get_date_or_string, Implementation, ImplementationRegistry
 
 
-@lru_cache()
-def _build_dumper(yaml):  # noqa: complex
-    class BasicYamlDumper(yaml.SafeDumper):  # noqa: too-many-ancestors
-        def list_representer(self, data):
-            return self.represent_sequence('tag:yaml.org,2002:seq', list(data))
+class YamlImplementation(Implementation):  # noqa: abstract-method
+    pass
 
-        def dict_representer(self, data):
-            return self.represent_mapping(
-                yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
-                list(data.items())
-            )
 
-        def decimal_representer(self, data):
-            return self.represent_scalar('tag:yaml.org,2002:float', str(data))
+class PyYamlImplementation(YamlImplementation):
+    module_name = 'yaml'
 
-        def time_representer(self, data):
-            return self.represent_scalar(
-                'tag:yaml.org,2002:str',
-                data.isoformat(),
-            )
+    def __init__(self):
+        super().__init__()
 
-        def userstring_representer(self, data):
-            return self.represent_scalar('tag:yaml.org,2002:str', data.data)
+        self._dumper = self._build_dumper()
+        self._strdate_loader = self._build_strdate_loader()
+        self._nativedate_loader = self._build_nativedate_loader()
 
-        def complex_representer(self, data):
-            return self.represent_scalar('tag:yaml.org,2002:str', str(data))
+    def serialize(self, value, pretty=False):
+        opts = {
+            'Dumper': self._dumper,
+            'allow_unicode': True,
+            'default_flow_style': not pretty,
+        }
+        return self._module.dump(value, **opts).rstrip()
 
-        def uuid_representer(self, data):
-            return self.represent_scalar('tag:yaml.org,2002:str', str(data))
+    def deserialize(self, value, native_datetimes=True):
+        if native_datetimes:
+            loader = self._nativedate_loader
+        else:
+            loader = self._strdate_loader
 
-        def enum_representer(self, data):
-            return self.represent_data(data.value)
+        return self._module.load(value, Loader=loader)
 
-        def unknown_representer(self, data):
-            if isinstance(data, tuple) and hasattr(data, '_fields'):
-                return self.dict_representer(data._asdict())
-            if isinstance(data, UserDict):
-                return self.dict_representer(data)
-            if isinstance(data, UserList):
-                return self.list_representer(data)
-            return self.represent_undefined(data)
+    def _build_dumper(self):  # noqa: complex
+        yaml = self._module
 
-    representers = (
-        (decimal.Decimal, BasicYamlDumper.decimal_representer),
-        (datetime.time, BasicYamlDumper.time_representer),
-        (set, BasicYamlDumper.list_representer),
-        (frozenset, BasicYamlDumper.list_representer),
-        (UserList, BasicYamlDumper.list_representer),
-        (defaultdict, BasicYamlDumper.dict_representer),
-        (OrderedDict, BasicYamlDumper.dict_representer),
-        (UserDict, BasicYamlDumper.dict_representer),
-        (UserString, BasicYamlDumper.userstring_representer),
-        (complex, BasicYamlDumper.complex_representer),
-        (fractions.Fraction, BasicYamlDumper.complex_representer),
-        (uuid.UUID, BasicYamlDumper.uuid_representer),
-        (None, BasicYamlDumper.unknown_representer),
-    )
+        class BasicYamlDumper(yaml.SafeDumper):  # noqa: too-many-ancestors
+            def list_representer(self, data):
+                return self.represent_sequence(
+                    'tag:yaml.org,2002:seq',
+                    list(data),
+                )
 
-    for type_, representer in representers:
-        BasicYamlDumper.add_representer(type_, representer)
+            def dict_representer(self, data):
+                return self.represent_mapping(
+                    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+                    list(data.items()),
+                )
 
-    BasicYamlDumper.add_multi_representer(
-        enum.Enum,
-        BasicYamlDumper.enum_representer,
-    )
+            def decimal_representer(self, data):
+                return self.represent_scalar(
+                    'tag:yaml.org,2002:float',
+                    str(data),
+                )
 
-    return BasicYamlDumper
+            def time_representer(self, data):
+                return self.represent_scalar(
+                    'tag:yaml.org,2002:str',
+                    data.isoformat(),
+                )
+
+            def userstring_representer(self, data):
+                return self.represent_scalar(
+                    'tag:yaml.org,2002:str',
+                    data.data,
+                )
+
+            def complex_representer(self, data):
+                return self.represent_scalar(
+                    'tag:yaml.org,2002:str',
+                    str(data),
+                )
+
+            def uuid_representer(self, data):
+                return self.represent_scalar(
+                    'tag:yaml.org,2002:str',
+                    str(data),
+                )
+
+            def enum_representer(self, data):
+                return self.represent_data(data.value)
+
+            def unknown_representer(self, data):
+                if isinstance(data, tuple) and hasattr(data, '_fields'):
+                    return self.dict_representer(data._asdict())
+                if isinstance(data, UserDict):
+                    return self.dict_representer(data)
+                if isinstance(data, UserList):
+                    return self.list_representer(data)
+                return self.represent_undefined(data)
+
+        representers = (
+            (decimal.Decimal, BasicYamlDumper.decimal_representer),
+            (datetime.time, BasicYamlDumper.time_representer),
+            (set, BasicYamlDumper.list_representer),
+            (frozenset, BasicYamlDumper.list_representer),
+            (UserList, BasicYamlDumper.list_representer),
+            (defaultdict, BasicYamlDumper.dict_representer),
+            (OrderedDict, BasicYamlDumper.dict_representer),
+            (UserDict, BasicYamlDumper.dict_representer),
+            (UserString, BasicYamlDumper.userstring_representer),
+            (complex, BasicYamlDumper.complex_representer),
+            (fractions.Fraction, BasicYamlDumper.complex_representer),
+            (uuid.UUID, BasicYamlDumper.uuid_representer),
+            (None, BasicYamlDumper.unknown_representer),
+        )
+
+        for type_, representer in representers:
+            BasicYamlDumper.add_representer(type_, representer)
+
+        BasicYamlDumper.add_multi_representer(
+            enum.Enum,
+            BasicYamlDumper.enum_representer,
+        )
+
+        return BasicYamlDumper
+
+    def _build_strdate_loader(self):
+        yaml = self._module
+
+        class StringedDatesYamlLoader(yaml.SafeLoader):
+            # pylint: disable=no-self-use
+
+            def timestamp_constructor(self, node):
+                return node.value
+
+        StringedDatesYamlLoader.add_constructor(
+            'tag:yaml.org,2002:timestamp',
+            StringedDatesYamlLoader.timestamp_constructor,
+        )
+
+        return StringedDatesYamlLoader
+
+    def _build_nativedate_loader(self):
+        yaml = self._module
+
+        class NativeDatesYamlLoader(yaml.SafeLoader):
+            # pylint: disable=no-self-use
+
+            def timestamp_constructor(self, node):
+                return get_date_or_string(node.value)
+
+            def str_constructor(self, node):
+                return get_date_or_string(node.value)
+
+        NativeDatesYamlLoader.add_constructor(
+            'tag:yaml.org,2002:str',
+            NativeDatesYamlLoader.str_constructor,
+        )
+        NativeDatesYamlLoader.add_constructor(
+            'tag:yaml.org,2002:timestamp',
+            NativeDatesYamlLoader.timestamp_constructor,
+        )
+
+        return NativeDatesYamlLoader
+
+
+class RuamelYamlImplementation(PyYamlImplementation):
+    module_name = 'ruamel.yaml'
+
+
+IMPLEMENTATIONS = ImplementationRegistry()
+IMPLEMENTATIONS.register('yaml', PyYamlImplementation)
+IMPLEMENTATIONS.register('ruamel.yaml', RuamelYamlImplementation)
 
 
 def to_yaml(value, pretty=False, pkg=None):
@@ -108,53 +198,8 @@ def to_yaml(value, pretty=False, pkg=None):
     :rtype: str
     """
 
-    yaml = get_implementation(
-        'YAML',
-        SUPPORTED_PACKAGES,
-        pkg,
-    )
-
-    options = {
-        'Dumper': _build_dumper(yaml),
-        'allow_unicode': True,
-    }
-    options['default_flow_style'] = not pretty
-
-    return yaml.dump(value, **options).rstrip()
-
-
-@lru_cache()
-def _build_loaders(yaml):
-    class StringedDatesYamlLoader(yaml.SafeLoader):
-        # pylint: disable=no-self-use
-
-        def timestamp_constructor(self, node):
-            return node.value
-
-    StringedDatesYamlLoader.add_constructor(
-        'tag:yaml.org,2002:timestamp',
-        StringedDatesYamlLoader.timestamp_constructor,
-    )
-
-    class NativeDatesYamlLoader(yaml.SafeLoader):
-        # pylint: disable=no-self-use
-
-        def timestamp_constructor(self, node):
-            return get_date_or_string(node.value)
-
-        def str_constructor(self, node):
-            return get_date_or_string(node.value)
-
-    NativeDatesYamlLoader.add_constructor(
-        'tag:yaml.org,2002:str',
-        NativeDatesYamlLoader.str_constructor,
-    )
-    NativeDatesYamlLoader.add_constructor(
-        'tag:yaml.org,2002:timestamp',
-        NativeDatesYamlLoader.timestamp_constructor,
-    )
-
-    return StringedDatesYamlLoader, NativeDatesYamlLoader
+    impl = IMPLEMENTATIONS.get(pkg)
+    return impl.serialize(value, pretty=pretty)
 
 
 def from_yaml(value, native_datetimes=True, pkg=None):
@@ -174,17 +219,5 @@ def from_yaml(value, native_datetimes=True, pkg=None):
     :type pkg: str
     """
 
-    yaml = get_implementation(
-        'YAML',
-        SUPPORTED_PACKAGES,
-        pkg,
-    )
-
-    stringed, native = _build_loaders(yaml)
-    if native_datetimes:
-        loader = native
-    else:
-        loader = stringed
-
-    return yaml.load(value, Loader=loader)
-
+    impl = IMPLEMENTATIONS.get(pkg)
+    return impl.deserialize(value, native_datetimes=native_datetimes)

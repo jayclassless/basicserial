@@ -1,9 +1,6 @@
 from .common import *
 
-from basicserial import to_toml, from_toml, SUPPORTED_TOML_PACKAGES
-
-
-SUPPORTED_TOML_PACKAGES = strip_missing_pkg(SUPPORTED_TOML_PACKAGES)
+from basicserial import to_toml, from_toml, AVAILABLE_TOML_PACKAGES
 
 
 def q(pkg, value):
@@ -14,7 +11,7 @@ def q(pkg, value):
 
 
 SIMPLE_TYPES = pkg_parameterize(
-    SUPPORTED_TOML_PACKAGES,
+    AVAILABLE_TOML_PACKAGES,
     (
         (123, '123'),
         (123.45, '123.45'),
@@ -45,14 +42,14 @@ def test_simple_types(pkg, value, expected):
     assert to_toml({'foo': value}, pkg=pkg) == 'foo = %s' % (q(pkg, expected),)
 
 
-@pytest.mark.parametrize('pkg', SUPPORTED_TOML_PACKAGES)
+@pytest.mark.parametrize('pkg', AVAILABLE_TOML_PACKAGES)
 def test_unknown_type(pkg):
     with pytest.raises(Exception):
         to_toml(object(), pkg=pkg)
 
 
 SEQUENCE_TYPES = pkg_parameterize(
-    SUPPORTED_TOML_PACKAGES,
+    AVAILABLE_TOML_PACKAGES,
     (
         ([123, 'foo', True], None),
         ((123, 'foo', True), None),
@@ -84,7 +81,7 @@ dd = defaultdict(list)
 dd['foo'] = 123
 
 DICT_TYPES = pkg_parameterize(
-    SUPPORTED_TOML_PACKAGES,
+    AVAILABLE_TOML_PACKAGES,
     (
         ({'foo': 123}, 'foo = 123'),
         (CustomNamedTuple(123), 'foo = 123'),
@@ -97,7 +94,7 @@ DICT_TYPES = pkg_parameterize(
 def test_dict_types(pkg, value, expected):
     assert to_toml(value, pkg=pkg) == expected
 
-@pytest.mark.parametrize('pkg', SUPPORTED_TOML_PACKAGES)
+@pytest.mark.parametrize('pkg', AVAILABLE_TOML_PACKAGES)
 def test_ordered_dict(pkg):
     if pkg == 'tomlkit':
         # tomlkit annoying sorts keys by itself
@@ -134,7 +131,7 @@ list = [
 ]"""
 
 
-@pytest.mark.parametrize('pkg', SUPPORTED_TOML_PACKAGES)
+@pytest.mark.parametrize('pkg', AVAILABLE_TOML_PACKAGES)
 def test_parse(pkg):
     parsed = from_toml(ALL_TYPES, pkg=pkg)
     assert parsed['int'] == 123
@@ -165,7 +162,7 @@ def test_parse(pkg):
     ]
 
 
-@pytest.mark.parametrize('pkg', SUPPORTED_TOML_PACKAGES)
+@pytest.mark.parametrize('pkg', AVAILABLE_TOML_PACKAGES)
 def test_parse_no_datetime(pkg):
     parsed = from_toml(ALL_TYPES, native_datetimes=False, pkg=pkg)
     assert parsed['int'] == 123

@@ -1,13 +1,10 @@
 from .common import *
 
-from basicserial import to_yaml, from_yaml, SUPPORTED_YAML_PACKAGES
-
-
-SUPPORTED_YAML_PACKAGES = strip_missing_pkg(SUPPORTED_YAML_PACKAGES)
+from basicserial import to_yaml, from_yaml, AVAILABLE_YAML_PACKAGES
 
 
 SIMPLE_TYPES = pkg_parameterize(
-    SUPPORTED_YAML_PACKAGES,
+    AVAILABLE_YAML_PACKAGES,
     (
         (123, '123\n...'),
         (123.45, '123.45\n...'),
@@ -37,7 +34,7 @@ def test_simple_types(pkg, value, expected):
 
 
 TIME_TYPES = pkg_parameterize(
-    SUPPORTED_YAML_PACKAGES,
+    AVAILABLE_YAML_PACKAGES,
     (
         (time(12, 34, 56), "'12:34:56'"),
         (time(12, 34, 56, 789), "'12:34:56.000789'"),
@@ -52,14 +49,14 @@ def test_time_types(pkg, value, expected):
     assert to_yaml(value, pkg=pkg) == expected
 
 
-@pytest.mark.parametrize('pkg', SUPPORTED_YAML_PACKAGES)
+@pytest.mark.parametrize('pkg', AVAILABLE_YAML_PACKAGES)
 def test_unknown_type(pkg):
     with pytest.raises(Exception):
         to_yaml(object(), pkg=pkg)
 
 
 SEQUENCE_TYPES = pkg_parameterize(
-    SUPPORTED_YAML_PACKAGES,
+    AVAILABLE_YAML_PACKAGES,
     (
         ([123, 'foo', True], '[123, foo, true]'),
         ((123, 'foo', True), '[123, foo, true]'),
@@ -72,7 +69,7 @@ def test_sequence_types(pkg, value, expected):
     assert to_yaml(value, pkg=pkg) == expected
 
 
-@pytest.mark.parametrize('pkg', SUPPORTED_YAML_PACKAGES)
+@pytest.mark.parametrize('pkg', AVAILABLE_YAML_PACKAGES)
 def test_set_types(pkg):
     out = to_yaml(set([123, 'foo', True]), pkg=pkg)
     assert out.startswith('[')
@@ -98,7 +95,7 @@ dd = defaultdict(list)
 dd['foo'] = 123
 
 DICT_TYPES = pkg_parameterize(
-    SUPPORTED_YAML_PACKAGES,
+    AVAILABLE_YAML_PACKAGES,
     (
         ({'foo': 123}, '{foo: 123}'),
         (od, '{foo: 123, zzz: true, bar: foo}'),
@@ -113,7 +110,7 @@ def test_dict_types(pkg, value, expected):
     assert to_yaml(value, pkg=pkg) == expected
 
 
-@pytest.mark.parametrize('pkg', SUPPORTED_YAML_PACKAGES)
+@pytest.mark.parametrize('pkg', AVAILABLE_YAML_PACKAGES)
 def test_pretty(pkg):
     assert to_yaml([1,2,3], pretty=True, pkg=pkg) == """- 1
 - 2
@@ -159,7 +156,7 @@ list:
 """
 
 
-@pytest.mark.parametrize('pkg', SUPPORTED_YAML_PACKAGES)
+@pytest.mark.parametrize('pkg', AVAILABLE_YAML_PACKAGES)
 def test_parse(pkg):
     parsed = from_yaml(ALL_TYPES, pkg=pkg)
     assert parsed['null'] is None
@@ -198,7 +195,7 @@ def test_parse(pkg):
     assert from_yaml("'12:34:56'", pkg=pkg) == time(12, 34, 56)
 
 
-@pytest.mark.parametrize('pkg', SUPPORTED_YAML_PACKAGES)
+@pytest.mark.parametrize('pkg', AVAILABLE_YAML_PACKAGES)
 def test_parse_no_datetime(pkg):
     parsed = from_yaml(ALL_TYPES, native_datetimes=False, pkg=pkg)
     assert parsed['null'] is None
