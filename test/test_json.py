@@ -180,7 +180,11 @@ def test_parse(pkg):
         datetime(2018, 5, 22, 12, 34, 56, 789, tzinfo=TZ_EST),
     ]
 
+
+@pytest.mark.parametrize('pkg', AVAILABLE_JSON_PACKAGES)
+def test_parse_some_scalars(pkg):
     assert from_json('"2018-05-22"', pkg=pkg) == date(2018, 5, 22)
+    assert from_json('123', pkg=pkg) == 123
 
 
 @pytest.mark.parametrize('pkg', AVAILABLE_JSON_PACKAGES)
@@ -218,5 +222,8 @@ def test_parse_no_datetime(pkg):
         "2018-05-22T12:34:56.000789-04:56",
     ]
 
-    assert from_json('"2018-05-22"', native_datetimes=False, pkg=pkg) == '2018-05-22'
 
+@pytest.mark.parametrize('pkg', AVAILABLE_JSON_PACKAGES)
+def test_parse_some_scalars_no_datetime(pkg):
+    assert from_json('"2018-05-22"', native_datetimes=False, pkg=pkg) == '2018-05-22'
+    assert from_json('123', native_datetimes=False, pkg=pkg) == 123
