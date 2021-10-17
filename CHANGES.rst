@@ -5,6 +5,12 @@ basicserial Change Log
 .. contents:: Releases
 
 
+1.2.1 (2021-10-17)
+==================
+
+* Fixed crash when no YAML libraries are installed.
+
+
 1.2.0 (2021-10-17)
 ==================
 

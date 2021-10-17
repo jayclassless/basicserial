@@ -30,9 +30,10 @@ class PyYamlImplementation(YamlImplementation):
     def __init__(self):
         super().__init__()
 
-        self._dumper = self._build_dumper()
-        self._strdate_loader = self._build_strdate_loader()
-        self._nativedate_loader = self._build_nativedate_loader()
+        if self.is_available():
+            self._dumper = self._build_dumper()
+            self._strdate_loader = self._build_strdate_loader()
+            self._nativedate_loader = self._build_nativedate_loader()
 
     def serialize(self, value, pretty=False):
         opts = {
@@ -183,7 +184,7 @@ class RuamelYamlImplementation(PyYamlImplementation):
     def __init__(self):
         super().__init__()
 
-        self._new_api = self._module.version_info >= (0, 15)
+        self._new_api = self._module and (self._module.version_info >= (0, 15))
 
     def _build_dumper(self, base_dumper=None):  # noqa: complex
         return super()._build_dumper(
