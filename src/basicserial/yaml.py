@@ -15,6 +15,7 @@ from collections import (
     UserList,
     UserString,
 )
+from io import StringIO
 
 from .util import get_date_or_string, Implementation, ImplementationRegistry
 
@@ -49,10 +50,11 @@ class PyYamlImplementation(YamlImplementation):
 
         return self._module.load(value, Loader=loader)
 
-    def _build_dumper(self):  # noqa: complex
+    def _build_dumper(self, base_dumper=None):  # noqa: complex
         yaml = self._module
+        base_dumper = base_dumper or yaml.SafeDumper
 
-        class BasicYamlDumper(yaml.SafeDumper):  # noqa: too-many-ancestors
+        class BasicYamlDumper(base_dumper):  # noqa: too-many-ancestors
             def list_representer(self, data):
                 return self.represent_sequence(
                     'tag:yaml.org,2002:seq',
@@ -133,10 +135,11 @@ class PyYamlImplementation(YamlImplementation):
 
         return BasicYamlDumper
 
-    def _build_strdate_loader(self):
+    def _build_strdate_loader(self, base_loader=None):
         yaml = self._module
+        base_loader = base_loader or yaml.SafeLoader
 
-        class StringedDatesYamlLoader(yaml.SafeLoader):
+        class StringedDatesYamlLoader(base_loader):
             # pylint: disable=no-self-use
 
             def timestamp_constructor(self, node):
@@ -149,10 +152,11 @@ class PyYamlImplementation(YamlImplementation):
 
         return StringedDatesYamlLoader
 
-    def _build_nativedate_loader(self):
+    def _build_nativedate_loader(self, base_loader=None):
         yaml = self._module
+        base_loader = base_loader or yaml.SafeLoader
 
-        class NativeDatesYamlLoader(yaml.SafeLoader):
+        class NativeDatesYamlLoader(base_loader):
             # pylint: disable=no-self-use
 
             def timestamp_constructor(self, node):
@@ -175,6 +179,56 @@ class PyYamlImplementation(YamlImplementation):
 
 class RuamelYamlImplementation(PyYamlImplementation):
     module_name = 'ruamel.yaml'
+
+    def __init__(self):
+        super().__init__()
+
+        self._new_api = self._module.version_info >= (0, 15)
+
+    def _build_dumper(self, base_dumper=None):  # noqa: complex
+        return super()._build_dumper(
+            base_dumper=self._module.representer.SafeRepresenter,
+        )
+
+    def _build_strdate_loader(self, base_loader=None):
+        return super()._build_strdate_loader(
+            base_loader=self._module.constructor.SafeConstructor,
+        )
+
+    def _build_nativedate_loader(self, base_loader=None):
+        return super()._build_nativedate_loader(
+            base_loader=self._module.constructor.SafeConstructor,
+        )
+
+    def serialize(self, value, pretty=False):
+        if self._new_api:
+            yaml = self._module.YAML(typ='safe')
+            yaml.allow_unicode = True
+            yaml.default_flow_style = not pretty
+            yaml.Representer = self._dumper
+            buf = StringIO()
+            yaml.dump(value, buf)
+            return buf.getvalue().rstrip()
+
+        opts = {
+            'Dumper': self._dumper,
+            'allow_unicode': True,
+            'default_flow_style': not pretty,
+        }
+        return self._module.dump(value, **opts).rstrip()
+
+    def deserialize(self, value, native_datetimes=True):
+        if native_datetimes:
+            loader = self._nativedate_loader
+        else:
+            loader = self._strdate_loader
+
+        if self._new_api:
+            yaml = self._module.YAML(typ='safe')
+            yaml.Constructor = loader
+            return yaml.load(value)
+
+        return self._module.load(value, Loader=loader)
 
 
 IMPLEMENTATIONS = ImplementationRegistry()
