@@ -106,15 +106,8 @@ class SimpleJsonImplementation(StdlibJsonImplementation):
 class OrJsonImplementation(JsonImplementation):
     module_name = 'orjson'
 
-    def _default(self, value):  # noqa: no-self-use
-        if isinstance(value, OrderedDict):
-            return dict(value)
-        raise TypeError
-
     def serialize(self, value, pretty=False):
-        opts = {
-            'default': self._default,
-        }
+        opts = {}
         if pretty:
             opts['option'] = self._module.OPT_INDENT_2
         return self._module.dumps(value, **opts).decode('utf-8')
