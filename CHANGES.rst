@@ -5,8 +5,8 @@ basicserial Change Log
 .. contents:: Releases
 
 
-1.2.0 (TBD)
-===========
+1.2.0 (2021-10-17)
+==================
 
 * Added support for using the ``pysimdjson`` and ``tomli`` libraries.
 
