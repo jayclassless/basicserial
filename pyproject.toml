@@ -30,7 +30,7 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.7"
 iso8601 = "*"
 
 [tool.poetry.dev-dependencies]
