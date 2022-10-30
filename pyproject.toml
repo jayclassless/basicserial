@@ -35,6 +35,7 @@ iso8601 = "*"
 
 [tool.poetry.dev-dependencies]
 coverage = "*"
+py = "*"
 pytest = "*"
 pytz = "*"
 pyyaml = "*"
